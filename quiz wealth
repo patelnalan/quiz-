@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>What Counts as Wealth? (Quiz)</title>
+  <style>
+    :root{
+      --bg: #0b1f14;          /* very dark green */
+      --panel: #0f2b1c;       /* dark green */
+      --panel-2: #123623;     /* slightly lighter */
+      --text: #e8f6ee;        /* near-white green tint */
+      --muted: #b7d7c4;       /* soft green */
+      --accent: #35c26b;      /* bright green */
+      --accent-2: #1ea457;    /* darker bright green */
+      --danger: #ff6b6b;
+      --warning: #ffd166;
+      --ok: #35c26b;
+      --border: rgba(232,246,238,0.14);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 15% 0%, #103624 0%, var(--bg) 55%, #07140d 100%);
+      color: var(--text);
+      line-height: 1.4;
+      padding: 24px;
+    }
+
+    .wrap{
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--panel) 0%, #0c2317 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    header{
+      padding: 22px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(90deg, rgba(53,194,107,.18), rgba(53,194,107,0));
+    }
+
+    h1{
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+      letter-spacing: .2px;
+    }
+
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size: .98rem;
+    }
+
+    .content{
+      padding: 18px 22px 22px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .scenario{
+      background: rgba(18,54,35,.6);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .scenario strong{ color: var(--text); }
+
+    .question{
+      background: rgba(15,43,28,.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .question-title{
+      margin: 0 0 10px;
+      font-weight: 650;
+      font-size: 1rem;
+    }
+
+    .options{
+      display: grid;
+      gap: 10px;
+    }
+
+    .option{
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(232,246,238,0.10);
+      background: rgba(18,54,35,.35);
+      cursor: pointer;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+    }
+    .option:hover{
+      transform: translateY(-1px);
+      border-color: rgba(53,194,107,.35);
+      background: rgba(18,54,35,.55);
+    }
+
+    input[type="checkbox"]{
+      margin-top: 2px;
+      accent-color: var(--accent);
+      transform: scale(1.15);
+      cursor: pointer;
+    }
+
+    .opt-text{
+      display: grid;
+      gap: 3px;
+    }
+    .opt-text small{
+      color: var(--muted);
+      opacity: .95;
+    }
+
+    .controls{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 2px;
+    }
+
+    button{
+      border: 1px solid rgba(53,194,107,.35);
+      background: linear-gradient(180deg, rgba(53,194,107,.25), rgba(30,164,87,.20));
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: transform .06s ease, filter .15s ease, border-color .15s ease;
+    }
+    button:hover{
+      filter: brightness(1.07);
+      border-color: rgba(53,194,107,.55);
+    }
+    button:active{ transform: translateY(1px); }
+
+    .ghost{
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .ghost:hover{
+      border-color: rgba(232,246,238,.25);
+      filter:none;
+    }
+
+    .score{
+      margin-left: auto;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .score strong{ color: var(--text); }
+
+    .results{
+      display: none;
+      margin-top: 6px;
+      background: rgba(18,54,35,.5);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .tag{
+      display:inline-block;
+      font-size: .8rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(232,246,238,0.16);
+      margin-bottom: 10px;
+    }
+
+    .tag.ok{ background: rgba(53,194,107,.18); border-color: rgba(53,194,107,.35); color: var(--text); }
+    .tag.warn{ background: rgba(255,209,102,.12); border-color: rgba(255,209,102,.25); color: var(--text); }
+    .tag.bad{ background: rgba(255,107,107,.12); border-color: rgba(255,107,107,.25); color: var(--text); }
+
+    .exp{
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding-left: 16px;
+      color: var(--muted);
+    }
+    .exp b{ color: var(--text); }
+
+    .footnote{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: .85rem;
+      opacity: .95;
+    }
+
+    .pill-row{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .pill{
+      border: 1px solid rgba(232,246,238,0.14);
+      background: rgba(11,31,20,.45);
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    /* makes label click also toggle checkbox nicely */
+    .option input{ pointer-events: none; }
+    .option *{ pointer-events: none; }
+    .option{ user-select: none; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card" role="region" aria-label="Wealth tax quiz">
+      <header>
+        <h1>What Counts as Wealth? (Quick Quiz)</h1>
+        <p class="subtitle">
+          Tick what you think would count towards <strong>net wealth</strong> if a wealth tax applied above a threshold.
+        </p>
+      </header>
+
+      <div class="content">
+        <div class="scenario">
+          <strong>Scenario:</strong> Imagine a UK wealth tax on <strong>net wealth</strong> above <strong>£2 million</strong>.
+          Net wealth is typically <strong>assets − debts</strong>.
+          <div class="pill-row" aria-hidden="true">
+            <span class="pill">Assets</span>
+            <span class="pill">− Debts</span>
+            <span class="pill">= Net wealth</span>
+          </div>
+        </div>
+
+        <div class="question" aria-label="Quiz options">
+          <p class="question-title">Which items would likely be counted when calculating net wealth?</p>
+
+          <div class="options" id="options">
+            <!-- Each option has: id, label, hint -->
+          </div>
+
+          <div class="controls">
+            <button id="checkBtn">Check answers</button>
+            <button id="resetBtn" class="ghost" type="button">Reset</button>
+            <div class="score" id="score" aria-live="polite"></div>
+          </div>
+
+          <div class="results" id="results" aria-live="polite"></div>
+        </div>
+
+        <div class="footnote">
+          Note: real-world proposals differ — the point here is to show the <strong>logic</strong> (assets, debts, valuation, and exemptions).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple quiz data
+    // correct = should be ticked if "counted in net wealth" (typical wealth tax base)
+    const items = [
+      {
+        id: "main_home",
+        label: "Main home (primary residence)",
+        hint: "Often included because property is a major component of wealth (some proposals add reliefs/exemptions).",
+        correct: true
+      },
+      {
+        id: "buy_to_let",
+        label: "Buy-to-let property",
+        hint: "Typically included: real estate is a core part of the tax base.",
+        correct: true
+      },
+      {
+        id: "pension",
+        label: "Pension savings",
+        hint: "Often debated: some proposals include, others exempt due to liquidity and policy reasons.",
+        correct: false
+      },
+      {
+        id: "isas",
+        label: "ISAs (savings/investments)",
+        hint: "Usually included: financial assets count (even if tax-advantaged under other rules).",
+        correct: true
+      },
+      {
+        id: "private_business",
+        label: "Shares in a private business",
+        hint: "Often included, but valuation is difficult (creates avoidance/design challenges).",
+        correct: true
+      },
+      {
+        id: "jewellery",
+        label: "Jewellery / collectibles",
+        hint: "Sometimes included in principle, but hard to value and enforce at scale.",
+        correct: false
+      },
+      {
+        id: "cars",
+        label: "Cars",
+        hint: "Usually excluded unless high-value luxury assets (admin cost can outweigh revenue).",
+        correct: false
+      },
+      {
+        id: "student_loan",
+        label: "Student loan debt",
+        hint: "Debts reduce net wealth in many designs (net = assets minus liabilities).",
+        correct: true
+      },
+      {
+        id: "mortgage",
+        label: "Mortgage debt",
+        hint: "Also reduces net wealth because it's a liability.",
+        correct: true
+      }
+    ];
+
+    const optionsEl = document.getElementById("options");
+    const checkBtn = document.getElementById("checkBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const resultsEl = document.getElementById("results");
+    const scoreEl = document.getElementById("score");
+
+    // Render options
+    function render() {
+      optionsEl.innerHTML = "";
+      items.forEach(item => {
+        const row = document.createElement("label");
+        row.className = "option";
+        row.setAttribute("for", item.id);
+
+        row.innerHTML = `
+          <input type="checkbox" id="${item.id}" />
+          <div class="opt-text">
+            <div>${item.label}</div>
+            <small>${item.hint}</small>
+          </div>
+        `;
+        optionsEl.appendChild(row);
+      });
+
+      resultsEl.style.display = "none";
+      resultsEl.innerHTML = "";
+      scoreEl.textContent = "";
+    }
+
+    function getUserAnswers() {
+      return items.map(item => {
+        const checked = document.getElementById(item.id).checked;
+        return { ...item, checked };
+      });
+    }
+
+    function grade() {
+      const answers = getUserAnswers();
+      let correctCount = 0;
+
+      answers.forEach(a => {
+        if (a.checked === a.correct) correctCount++;
+      });
+
+      // Feedback band
+      const pct = Math.round((correctCount / items.length) * 100);
+      let tagClass = "warn";
+      let tagText = "Good start";
+      if (pct >= 89) { tagClass = "ok"; tagText = "Excellent"; }
+      else if (pct <= 55) { tagClass = "bad"; tagText = "Needs a rethink"; }
+
+      // Build explanation list
+      const ul = document.createElement("ul");
+      ul.className = "exp";
+
+      answers.forEach(a => {
+        const verdict = (a.correct ? "Counted" : "Usually not counted");
+        const user = (a.checked ? "You ticked this." : "You didn’t tick this.");
+        const isRight = (a.checked === a.correct);
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <b>${a.label}</b> — ${isRight ? "✅ Correct" : "❌ Not quite"}<br>
+          <span>${verdict}. ${user} ${a.hint}</span>
+        `;
+        ul.appendChild(li);
+      });
+
+      resultsEl.innerHTML = `
+        <span class="tag ${tagClass}">${tagText}</span>
+        <div style="color: var(--muted); margin-bottom: 10px;">
+          Score: <strong>${correctCount}/${items.length}</strong> (${pct}%)
+        </div>
+      `;
+      resultsEl.appendChild(ul);
+      resultsEl.style.display = "block";
+
+      scoreEl.innerHTML = `Your score: <strong>${correctCount}/${items.length}</strong>`;
+    }
+
+    function reset() {
+      items.forEach(item => {
+        const box = document.getElementById(item.id);
+        if (box) box.checked = false;
+      });
+      resultsEl.style.display = "none";
+      resultsEl.innerHTML = "";
+      scoreEl.textContent = "";
+    }
+
+    checkBtn.addEventListener("click", grade);
+    resetBtn.addEventListener("click", reset);
+
+    render();
+  </script>
+</body>
+</html>
